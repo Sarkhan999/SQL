@@ -1,0 +1,166 @@
+-----------------------------SQL Chapter 5--------------------------
+
+???LPAD az elesen round edecek yoxsa ceil/floor?
+
+--3 types of functions:
+	1. Character
+	2. Number
+	3. Data
+	4. Other
+
+
+1.Character:
+	LPAD('100',7,'0') --'0' is optional, by default single space
+	RPAD(s1,s2,o1)
+	SOUNDEX(s1)
+	RTRIM(s1,o1) --o1
+	LTRIM(s1,o1)
+
+	TRIM(trim_info trim_char FROM s1)
+		Parameters:
+		i.   trim_info is one of these keywords: LEADING, TRAILING, BOTH—if omitted, defaults to BOTH.
+		ii.  trim_char is a single character to be trimmed—if omitted, assumed to be a blank.
+		iii. trim_source is the source string—if omitted, the TRIM function will return a NULL.
+		
+		Note:
+		trim_char can only be 1 character
+
+
+
+	instr(s1,s2,o_pos,o_n)
+		Parameters: 
+		i.   s1 is the source string (required); 
+		ii.  s2 is the substring (required); 
+		iii. o_pos is the starting position in s1 to start looking for occurrences of s2 (optional, default is 1); 
+		iv.  o_n is the occurrence of s2 to locate (optional, default is 1). 
+		
+		Note:
+		If o_pos is negative, the search in s1 for occurrences of s2 starts at the end of the string and moves backward.
+
+	substr(s1,s2,o1)
+	length(x)
+	replace(x,y,o)
+	translate(X,'ÜÖĞ~','UOG')
+
+2. Number
+	CEIL(n) -- higher (relative to -infinity)
+	FLOOR(n) -- lower (relative to -infinity)
+	ROUND(n,o1) -- relative to 0
+	TRUNC(n,o1) -- relative to 0
+
+	REMAINDER(n1, n2) --closest multiple of n2; ROUND
+		REMAINDER(9,3) --0
+		REMAINDER(10,3) -- 1
+		REMAINDER(11,3) -- -1; as it is nearest
+
+	MOD(n1,n2)
+		MOD(9,3) -- 0
+		MOD(10,3) -- 1
+		MOD(11,3) -- 2
+
+	ROUND(d1,o1)
+		o1 is optional format, could be d,mm,rr etc. rounding up if ~0.5
+		if omited, then rounding to the nearest hour
+
+	TRUNC(d1,o1)
+		o1 is optional, is a format model
+
+
+
+	SIN, ASIN, SINH
+	COS, ACOS, COSH
+	TAN, ATAN, TANH, ATAN2
+	ABS
+	SIGN
+
+
+3. Date functions
+	SYSDATE --18-Oct-2023
+	Time information is contained within SYSDATE but doesn’t display by default
+	Time can be extracted by way of the TO_CHAR conversion function
+
+	SYSTIMESTAMP
+
+	ROUND(s1,o1)
+	TRUNC(s1,o1)
+		o1:
+			DD
+			MM
+			RR
+			YY
+
+	NEXT_DAY(r1,r2)
+		r2: 'Saturday'
+		
+	LAST_DAY(r1) --last day of the month
+
+	ADD_MONTHS(r1,r2)
+		r2: could be negative
+
+	MONTHS_BETWEEN(r1,r2) --reverse logic
+
+	NUMTOYMINTERVAL(r1,r2)
+		r2: 'YEAR' or 'MONTH'
+		27,'MONTH' -- 2-3
+
+	NUMTODSINTERVAL(r1,r2)
+		r2:  'DAY', 'HOUR', 'MINUTE', or 'SECOND'
+		36,'HOUR' -- 1 12:00:00
+
+	+“conversion” functions
+
+	4. Other Functions
+	USER
+	STDDEV()
+	VARIANCE()
+	PERCENTILE_CONT(n1) WITHIN GROUP (ORDER BY x) OVER (PARTITION BY y)
+
+
+	--DUAL
+	one column = DUMMY
+	one row = 'X'
+	data type = VARCHAR2(1)
+
+
+
+	--additional
+	TO_CHAR(SYSDATE,'DD-Mon-YY HH:MI:SS')
+	TO_CHAR(SYSDATE,'DD-Mon-YY HH24:MI:SS')
+
+
+
+	Three categories of functions tested by the exam: 
+	Single Row Functions:
+		1. Scalar
+			one answer for every one row 
+	Group Functions:
+		2. Analytical
+		3. Aggregate functions / multirow
+			one answer for a set of multiple or zero rows
+
+	Analytical functions:
+		* analytics are forbidden in the WHERE, HAVING, and GROUP BY
+		* order of script execution:
+			Analytical -> ORDER BY
+
+	SUM(SQ_FT) OVER (ORDER BY SQ_FT) as RUNNING_TOTAL,
+	SUM(SQ_FT) OVER (ORDER BY SQ_FT
+					 ROWS BETWEEN 1 PRECEDING
+					 AND 1 FOLLOWING) as SUBSET_of_3,
+
+	SUM(SQ_FT) OVER (partition by company ORDER BY SQ_FT) as RUNNING_TOTAL,
+	SUM(SQ_FT) OVER (partition by company 
+					 ORDER BY SQ_FT
+					 ROWS BETWEEN 1 PRECEDING
+					 AND 1 FOLLOWING) as SUBSET_of_3,
+
+	LAG(SQ_FT) OVER (ORDER BY window, sq_Ft) lag --prior row's value
+	LEAD(SQ_FT) OVER (ORDER BY window, sq_Ft) lead --prior row's value
+
+		--partition by also could be used
+
+	LAG(SQ_FT,2) ... 
+	LEAD(SQ_FT,2) ...
+
+
+???LAG lead rows between ile ishleyir?

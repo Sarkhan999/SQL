@@ -1,0 +1,142 @@
+-----------------------------SQL Chapter 6--------------------------
+----------Conversion Functions and Conditional Expressions----------
+
+
+	1. Conversion Functions (format change)
+	2. Conditional Expressions
+
+1. Conversions:
+	a. Implicit - automatic
+	b. Explicit - manual
+
+Rules:
+1. Numeric values will generally NOT convert automatically to dates.
+2. Numeric and text data will generally NOT convert automatically to very large sized types, such as LOB, CLOB, RAW, and others.
+3. Very large types will generally NOT automatically convert to each other, such as from BLOB to CLOB, for example. Some will, but many won’t.
+4. Syntax that depends on an implicit conversion, the index might not be used.
+
+
+--Explicit convertions:
+TO_TIMESTAMP_TZ(x,y)
+
+TO_NUMBER(e1, o_format_model, o_nls_parms)
+
+----o_format_model-----
+	., -- decimal thousand seperators
+	99G999D99 -- Group and Decimal seperator (NLS_NUMERIC_CHARACTERS)
+
+	0000000 -- ex. for CIFs
+	9
+	9.9EEE -- scientific number format
+	999V99 -- value multiplied by 10n n=99
+	XXXX -- returns hexadecimal value
+
+	B999 --blank
+	999MI -- minus plus sign
+	S999 ,  999S -- minus sign
+	999PR -- brackets (accounting style)
+
+	$999.99
+	C999 -- currency symbol (or NLS_ISO_CURRENCY)
+	L999 -- local currency
+	U999 -- Euro sign (or NLS_DUAL_CURRENCY)
+	RN -- Roman numerials
+
+	TM -- ???? the text minimum number format model returns the smallest number of character possible
+
+----o_NLS_PAR-----
+	NLS_NUMERIC_CHARACTERS = 'dg' --Decimal Group
+	NLS_CURRENCY = 'text' -- local currency (L)
+	NLS_ISO_CURRENCY = 'currency' -- international Currency (C)
+
+
+
+
+TO_CHAR()
+1. String
+2. Numeric
+3. Date
+
+
+TO_CHAR(string)
+* NCHAR
+* NVARCHAR2
+* CLOB
+* NCLOB
+
+TO_CHAR(Numeric, o_format_model, nls_parms)
+o_format_model -- same as TO_NUMBER
+
+
+TO_CHAR(Date, o_format_model,nls_parms)
+
+	FF 		--Seconds, Fractional seconds
+	SS 		--seconds, 0-59
+	SSSS 		--seconds of the day, 0-86399
+	MI 		--Minute, 0-59
+	HH,HH12 --Hours, 1-12
+	HH24 	--Hours, 1-24
+
+	AM/A.M./PM/P.M. --time, 
+	TS 		--time format, short time format. Allowable only when specified with the DL or DS format model, seperated by white space
+	TZD 	--time zone, daylight saving time. Valid only in timestamp and interval formats (EST,CMT)
+	TZH 	--time zone, hour, not in date types. Valid only in timestamp and interval formats. 00-12
+	TZM 	--time zone, minute. Valid only in timestamp and interval formats, 00-59
+	TZR 	--time zone, region, Valid only in timestamp and interval formats, America/Los_Angeles
+
+	W 		--week of the month, 1-5
+	IW 		--week of the year, 1-53
+	WW 		--week of the year, 1-53
+
+	DAY 	--weekday, Monday …
+	D 		--weekday, 1-7
+	DY 		--weekday, Mon, Tue …
+	DD 		--Day of month, 1-31
+	DDD 	--Day of year, 1-366
+
+	MONTH 	--Month, January …
+	MON 	--Month, Jan …
+	MM 		--Month, 01-12
+
+	I,IY,IYY --year, last x digits of ISO year
+	RR 		--year, 00-49 2000, 50-99 1950
+	RRRR 	--year, 00-49 2000, 50-99 1950
+	Y,YYY 	--year, 
+	YEAR,SYEAR --year, spelled in English (S - BC with minus sign)
+	YYYY,SYYYY --year, 1997 (S - BC with minus sign)
+	YYY,YY,Y --year, last x digits of the year
+
+	AD/A.D./BC/B.C --Period, 
+	CC/SCC 	--Period, 
+	E 		--Period, Abbreviated era Name
+	EE 		--Period, Full era name
+	J 		--Period, Julian day (1 Jan 4712 BC)
+	RM 		--Period, 
+	FM 		--other, used on combination with other elements to direct the susppression of leading or trailing blanks
+	FX 		--other, exact matching between the character data and the format model
+	9999PR 	--other, if negative <>, if positive returned with leading and trailing spaces
+	X 		--other, Local radix character
+	"text" 	--other, literal value. Display as is
+	-/,.;: 	--Punctuations, 
+	Q 		--Quarter, 
+	DL 		--Date, long date 
+	DS 		--Date, short date
+
+
+TO_DATE			(c, o_format_model, o_nls_parms) --same as TO_CHAR(date...)
+TO_TIMESTAMP	(c, o_format_model, o_nls_parms) --same as TO_CHAR(date...)
+TO_TIMESTAMP_TZ	(c, o_format_model, o_nls_parms) --with time zone
+TO_YMINTERVAL 	('y-m')
+TO_DSINTERVAL	(sql_format, nls_parms)
+NUMTOYMINTERVAL	(n, interval_unit)
+NUMTODSINTERVAL	(n, interval_unit)
+CAST (expression as datatype) ex. cast(x as TIMESTAMP WITH LOCAL TIME ZONE)
+
+NULLIF(r1,r2) -- 	if same then null, 
+					if not then r1, good for old new value comparison, if not updated then shows the value which should be
+
+CASE X
+	when 1000 then 'OK'
+	when 5000 then 'OK'
+	else 'NOT OK'
+END;

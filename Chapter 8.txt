@@ -1,0 +1,88 @@
+-----------------------------SQL Chapter 8--------------------------
+----------Displaying Data from Multiple Tables----------
+
+Types of joins:
+1.
+	i. Equijoin
+		A=B
+	ii. Non-equijoin
+		A<>B
+		A>B
+		A<B etc.
+
+2. 
+	i. Inner join
+	ii. Outer join
+	
+3. 
+	i. Self join
+	ii. Natural join
+	
+
+Inner join:
+a. JOIN
+B. INNER JOIN
+C. 
+	Note: Alliance is required
+	Select * from TABLE_A A, TABLE_B B
+	where a.CIF = b.CIF
+	
+Alliases works:
+insert, update, merge, delete, select
+
+
+
+NATURAL JOIN:
+1. by default is inner join
+1. works where two tables has exactly same column NAME
+2. JOIN column will not work with alliases, error. 
+	No alliases required while using it in join columns. 
+	Ex. Correct: CIF,; Incorrect: A.CIF or B.CIF
+3. Other columns could be used as alliases
+
+
+SELECT CIF, LAST_NAME, ADDRESS
+FROM TABLE_A NATURAL JOIN TABLE_B
+
+NATURAL LEFT (OUTER) JOIN
+NATURAL RIGHT (OUTER) JOIN
+NATURAL FULL OUTER JOIN
+
+??? 2 sutun oxshardirsa onda 2de join edecek?
+???3 cedvel etmek olar?
+
+
+USING
+
+SELECT CIF, LAST_NAME, ADDRESS
+FROM TABLE_A LEFT JOIN (RIGHT JOIN, FULL OUTER JOIN) TABLE_B 
+USING (CIF, XXX)
+
+???full outer join elesem 2 sutun olacag?
+???3 cedvel etmek olar?
+
+
+Non_equijoin
+Ex:
+select * from table_a join table_b
+on score between min_score and max_score
+
+
+
+alter table table_a
+add constraint fk_PO foreign key (reports_to)
+references table_a (position_id)
+
+
+??? full outer join ve full join eynidi? voobwe 2ci ishleyir? test in oracle sql app
+
+
+
+Old version of left and rght joins:
+--left join
+select * from table_a,table_b
+where a.x = b.x (+)
+
+--right join
+select * from table_a,table_b
+where a.x(+) = b.x

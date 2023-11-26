@@ -1,0 +1,116 @@
+-----------------------------SQL Chapter 14--------------------------
+-----------------------------CREATING USER---------------------------
+
+CONNECT dwh_004423/BALLACK2021;								-- as a DBA (or if you have enough priviliges) you could join to other account using below	
+
+CREATE USER dwh_004900 IDENTIFIED BY PAHAaz22;				--Creating user
+ALTER USER 	dwh_004900 IDENTIFIED BY PAHAaz23; 				--Changing the password
+DROP USER dwh_004900;										--Remove user from Database
+DROP USER dwh_004900 CASCADE; 								--if user has any objects like then
+
+
+
+-----------------------------GRANTING USER-----------------------------
+
+GRANT CREATE SESSION TO dwh_004900;							--Grant Create Session
+GRANT UNLIMITED TABLESPACE TO dwh_004900;					--Granting to the user curtain actions	
+GRANT CREATE TABLE TO dwh_004900;							--Grant Create Table
+GRANT CREATE SEQUENCE TO dwh_004900;						--Creating Sequence
+
+GRANT  SELECT TO   dwh_004900;								--GRANT/REVOKE is an anthonymes
+REVOKE SELECT FROM dwh_004900;								--^
+
+
+GRANT CREATE ANY TABLE TO dwh_004900;						--Granting creating any table to dwh_004900
+
+--results:
+
+--Example 1
+CONNECT SYSTEM/MANAGER;
+CREATE USER DWH_004423 IDENTIFIED BY BALLACK2021;
+GRANT CREATE SESSION TO DWH_004423;
+GRANT UNLIMITED TABLESPACE TO DWH_004423;
+GRANT CREATE TABLE TO DWH_004423;
+
+--Example 2
+CREATE USER DWH_4444 IDENTIFIED BY GOD_LEVEL_1;
+GRANT CREATE SESSION TO DWH_4444;
+GRANT UNLIMITED TABLESPACE TO DWH_4444;
+GRANT CREATE TABLE TO DWH_4444;
+CONNECT DWH_4444/GOD_LEVEL_1;
+CREATE TABLE DWH_004423.TEST_TABLE (CUSTOMER_ID VARCHAR2 (20));
+
+
+GRANT privilege TO dwh_004900 WITH ADMIN OPTION;			--'WITH ADMIN OPTION' User could regrant to other users;
+															--without admin option you could not regrant to other user
+															--if 'WITH SYSTEM OPTION' revoke it does NOT CASCADE
+															--'WITH ADMIN OPTION' revoke CASCADES
+
+GRANT ALL PRIVILEGES TO DWH_004900;
+REVOKE ALL PRIVILEGES TO DWH_004900;
+
+
+GRANT  CREATE ANY TABLE TO   PUBLIC;						--Create any table for any user under any user
+REVOKE CREATE ANY TABLE FROM PUBLIC;
+
+
+GRANT SELECT ANY TABLE,										--user who has privileges to SELECT, INSERT, UPDATE, DELETE any table 
+      INSERT ANY TABLE,
+	  UPDATE ANY TABLE,
+	  DELETE ANY TABLE
+	  TO dwh_004900;
+
+
+GRANT CREATE PUBLIC SYNONYM TO DWH_004900					--Creating Public synonyms
+--meanwhile dwh_004900
+CREATE PUBLIC SYNONYM CUSTOMER_LIST FOR DWH_004900.CUSTOMER_LIST;
+--then other users could select the table as below
+select * from CUSTOMER_LIST;
+
+
+GRANT SELECT, UPDATE ON CUSTOMER_LIST 						--GRANT user for regranting other users
+TO DWH_004900 WITH GRANT OPTION;
+--meanwhile dwh_004900
+GRANT SELECT ON CUSTOMER_LIST TO DWH_4444; 					--only one by one
+REVOKE SELECT, UPDATE ON CUSTOMER_LIST TO DWH_004900; 		--all consequent re-grants will be revoked
+
+--ALL (PRIVILEGES) 
+GRANT  ALL PRIVILEGES ON CUSTOMER_LIST TO   DWH_004900;
+GRANT  ALL            ON CUSTOMER_LIST TO   DWH_004900;
+
+REVOKE ALL PRIVILEGES ON CUSTOMER_LIST FROM DWH_004900 WITH GRANT OPTION;
+REVOKE ALL            ON CUSTOMER_LIST FROM DWH_004900 WITH GRANT OPTION;
+
+FLASHBACK TABLE CUSTOMER_LIST BEFORE DROP;					--Return table with previous privileges
+
+select PRIVILEGE, ADMIN_OPTION from user_sys_privs;			--See PRIVILEGES gave to your USER
+
+select GRANTOR, OWNER, GRANTEE, TABLE_NAME, 				--Equivalent to above query for all users
+PRIVILEGE, GRANTABLE from dba_sys_privs;
+
+
+select GRANTOR, OWNER, GRANTEE, TABLE_NAME,					--to check privileges of certain user	 
+PRIVILEGE, GRANTABLE from dba_sys_privs
+WHERE grantee in ('PUBLIC','DWH_004900')
+
+
+
+
+----------------------------SUMMARY------------------------------
+
+grant 'PRIVILEGE' to 'USER' WITH 'CERTAIN OPTION'
+
+PRIVILEGE:					YYYYYY:
+CREATE SESSION				
+UNLIMITED TABLESPACE        
+CREATE TABLE                
+PRIVILEGE                   WITH ADMIN OPTION
+ALL PRIVILEGES              
+CREATE PUBLIC SYNONYM       
+							
+SELECT ANY TABLE,           
+INSERT ANY TABLE,           
+UPDATE ANY TABLE,           
+DELETE ANY TABLE            
+							
+SELECT						WITH GRANT OPTION

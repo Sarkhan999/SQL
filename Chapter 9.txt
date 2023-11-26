@@ -1,0 +1,45 @@
+-----------------------------SQL Chapter 9--------------------------
+----------Using Subqueries to Solve Queries----------
+
+Subqueries could be used in:
+SELECT, INSERT, UPDATE, MERGE, DELETE
+CREATE TABLE, CREATE VIEW
+
+
+
+
+Types of subqueires:
+	1. Single row subqueries -- [1] row and  [0:] columns
+	2. Multiple row subqueries -- [0:] row and [0:] columns
+	3. Multiple column subqueries -- [1:] row and [2:] columns
+	4. Correlated subquearies -- 
+	5. Scalar subqueries -- [1] row and [1] column
+
+4. Correlated subqueries:
+	a. Select
+		select * from table mt
+		where mt.amount > 
+		(select avg(amount)
+		from table t1
+		where t1.type = mt.type
+		)
+	
+	b. Update 1
+		update table tm
+		set discount_flg = 'Y'
+		where amount = (select max(amount) from table t1 where to_char(t1.date,'YYYY-Q') = to_char(tm.date,'YYYY-Q'))
+
+	c. Update 2
+		update table tm
+		set x = (select x from table t1 where tm.cif = t1.cif)
+		where y exists (select y from table t2 where tm.cif = t2.cif)
+
+
+EXISTS:
+* exists table wholy is loaded
+* sometimes referred as semijoin (as whole table is executed)
+
+select * from table
+where customer_type = (select customer_type from table_2 where amount= 0)
+* will work only if subquerry will give SINGLE row data
+

@@ -1,0 +1,36 @@
+-----------------------------SQL Chapter 13--------------------------
+
+--Multi Table INSERT
+--Unconditional
+INSERT ALL
+	INTO tab1 (col_list) VALUES (col_list1)
+	INTO tab2 (col_list) VALUES (col_list2)
+subquery;
+--Conditional
+INSERT ALL -- could be ALL (default could be omitted) or FIRST 
+	WHEN expression THEN
+		INTO tab1 (col_list) VALUES (col_list1)
+	WHEN expression THEN
+		INTO tab2 (col_list) VALUES (col_list2)
+	ELSE --optional
+		INTO tab3 (col_list) VALUES (col_list3)
+subquery;
+
+-WRONG Queries
+--should be insert all 
+INSERT
+	INTO tab1 (col_list) VALUES (col_list1)
+	INTO tab2 (col_list) VALUES (col_list2)
+subquery;
+
+--Merge Function
+MERGE INTO table
+USING table | subquery
+ON condition
+WHEN MATCHED THEN UPDATE SET col = expression | DEFAULT
+where_clause
+DELETE where_clause
+WHEN NOT MATCHED THEN INSERT (col1, col2)
+VALUES (expr1, expr2 | DEFAULT)
+where_clause
+WHERE condition;

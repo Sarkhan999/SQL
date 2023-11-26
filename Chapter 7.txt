@@ -1,0 +1,55 @@
+-----------------------------SQL Chapter 7--------------------------
+----------Reporting Aggregated Data Using the Group Functions----------
+
+Single Row Functions:
+	1. Scalar
+		one answer for every one row 
+Group Functions:
+	2. Analytical -- ...() OVER(PARTITION BY X ORDER BY Y)
+	3. Aggregate functions / multirow -- ...() WITHIN GROUP (ORDER BY Y)
+		one answer for a set of zero to multiple rows
+
+--COUNT
+	SELECT count(X), count(distinct x), count(all x) from dual
+	1. all or without is same
+	2. distinct  
+
+
+
+COUNT(e1)
+SUM(e1) -- Numeric
+AVG(e1) -- Numeric; ignores null
+MEDIAN(e1) -- Numeric, Date, 
+MIN(e1) -- Numeric, Date, String
+MAX(e1) -- Numeric, Date, String
+
+
+
+RANK() -- 1,2,2,4...
+DENSE_RANK() -- 1,2,2,3...
+ROW_NUMBER() -- 1,2,3,4...
+
+
+
+--Analytical function
+	RANK() OVER(PARTITION BY X ORDER BY Y) --PARTITION BY is optional
+
+--Aggregate function
+	RANK(c1,c2,c3...) WITHIN GROUP (ORDER BY Y1,Y2,Y3...)
+	RANK(466) WITHIN GROUP (ORDER BY Y) 
+
+
+--FIRST, LAST
+	agg_func() KEEP(DENSE_RANK FIRST ORDER BY Y) over(partition by X )
+	agg_func() KEEP(DENSE_RANK LAST ORDER BY Y)
+	agg_func() --MIN, MAX, SUM
+
+
+
+Nesting funcitons:
+	* You are allowed to nest aggregate functions up to two levels deep.
+
+
+Having:
+	* Accepts AND, OR, and NOT
+	* Include scalar functions

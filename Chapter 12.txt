@@ -1,0 +1,24 @@
+-----------------------------SQL Chapter 12--------------------------
+
+--definition of each view
+select * from DICTIONARY;
+
+--tables owned by the current user
+select * from USER_TABLES;
+select * from ALL_TABLES;
+select * from DBA_TABLES;
+
+--General prefixes
+USER_***;
+ALL_***;
+DBA_***;
+
+--*** variations
+***_TABLES;
+***_CONSTRAINTS;
+***_SYNONYMS;
+
+--Dynamic Performance Views
+V_$***; --dynamic performance views
+GV_$***; -- 
+V$***;
