@@ -1,0 +1,271 @@
+-----------------------------SQL Chapter 10--------------------------
+----------Schema Objects----------
+
+Include:
+	1. Tables
+	2. Views
+	3. Indexes
+	4. Sequences
+
+
+Constraints:
+	* Not a DB Object
+	* Listed in Data Dictionary
+	* has a named
+	
+	Includes:
+		NOT NULL
+		UNIQUE
+		PRIMARY KEY
+		FOREIGN KEY
+		CHECK
+
+
+Views:
+	is a select statement with assigned name on it
+	Act like table
+	Has a name
+	Could:
+		Insert, update, Delete
+
+
+Index:
+	Works as book reference on last pages
+
+
+
+Sequences:
+	order number
+	
+
+
+
+
+Views:
+	* is Object
+	preferable usage:
+		1. Security/Confidentiality
+		2. Simplifing complex scripts
+		
+	syntax:
+		create view VW_EMPLOYEES as select employee_id, mobile_number from EMPLOYEES
+			- create or replace view
+			- VW_EMPLOYEES (ID, PHONE) -- for specifying certain columns
+	
+	
+	Update, Delete, insert into NOT WORKS:
+		1. NOT NULL
+		2. GROUP BY
+		3. DISTINCT
+		4. FROM with multiple columns
+		5. A || B cannot make changes on A and B columns
+		
+		
+	Inline Views:
+		unlimited - Inline view nesting
+		max 255 - nested subqueries (levels)
+		
+		ROWNUM processed before ORDER BY. So use Inline Views
+		
+	Alter View:
+		Create, Modify, Drop constraints
+		Recompile
+		ALTER VIEW ... COMPILE -- 
+			* used to recompile/modify an Invalid View
+			* it returns value “Warning: View altered with compilation errors.”
+			???try alter view ... compile
+			* You cannot change a view with ALTER VIEW statement, you must drop and re-create the view.
+		
+Invisible Columns and Tables:
+	create table tmp(
+	ship_id,
+	Construction_cost number(4,2) INVISIBLE
+	)
+	
+	DESC TMP --SQL query
+		* hiden columns will not be visible
+		* SQL *Plus tool:
+			** SET COLINVISIBLE ON
+				DESC TABLE will return invisible column in particular session
+		* could insert data into invisible column (only if you specify column name)
+		
+	
+Invisible Columns and Views:
+	1. create or replace view as vw_tmp select * from tmp
+		* invisible columns will not be created
+	2. create or replace view as vw_tmp select column1, invisible_column_2 from tmp
+		* invisible column will work if you select * from vw_tmp
+		
+		
+Sequences:
+	CREATE SEQUENCE SEQ_NAME SEQ_OPTIONS
+	DROP SEQUENCE SEQ_NAME
+	
+	
+	SEQ_OPTIONS:
+		INCREMENT BY
+		START WITH
+		
+		MAXVALUE
+		NOMAXVALUE
+		MINVALUE
+		NOMINVALUE
+		
+		CYCLE
+		NOCYCLE
+		
+	examples:
+		CREATE SEQUENCE SEQ_NAME INCREMENT BY 1 START WITH 1 --same as just create sequence seq_name
+		
+		INSERT INTO ORDERS_TABLE (ORDER_ID, DATE, CIF)  VALUES (SEQ_NAME.NEXTVAL, SYSDATE, 28)
+		
+		select COST / (3 * SEQ_PROJ_ID.NEXTVAL) from TABLE -- even if it menasiz, it works
+		
+	SEQ_NAME pseudocolumn:
+		SEQ_NAME.NEXTVAL
+		SEQ_NAME.CURRVAL -- 
+		
+		
+	Points to mention:
+		* CURRVAL could NOT be used without NEXTVAL in one SESSION. First NEXTVAL then CURRVAL
+		* if you insert nextval and it gives error then, sequence generator will advance to next number
+		* ROLLBACK will not reset sequence
+		
+		CURRVAL, NEXTVAL Cannot be used/invoke:
+			* not be used DEFAULT  of  CREATE TABLE or ALTER TABLE
+			* not be used SUBQUERY of  CREATE VIEW, SELECT, UPDATE, DELETE
+			* not be used CHECK constraints
+		
+		CURRVAL, NEXTVAL Cannot be combined:
+		
+			* not combined in UNION, INSTERSECT, MINUS
+			* SELECT of DISTINCT operator
+		
+
+		
+INDEX
+	Implicit Index Creation
+		* PRIMARY KEY or UNIQUE automatically Indexed
+		* SELECT * FROM USER_INDEXES
+		* SELECT * FROM USER_IND_COLUMNS
+		
+	CREATE INDEX index_name ON table_name(column_name)
+	DROP INDEX index_name
+		* if table is droped then index is also droped
+		
+		
+	Points to consider:
+		* <> index will not work
+		* =, >, < index will work
+		* LIKE 'SMITH%' will work
+		* LIKE '%SMITH' will not work
+		* functions on column will not work (except function based index)
+		* transaction based tables usually not more than 5 indexes; more than 5 usualy text based searches
+	
+	
+	Composite INDEX:
+		* 2 and more columns
+		* SKIP Scanning: skips 1st indexed column and moves toward 2nd. 
+			How many unique values exists in 1st columnn, o geder de istifade olunacaq
+	CREATE INDEX index_name ON table_name(column_name_1, column_name_2)
+	
+	CREATE UNIQUE INDEX index_name ON table_name (column_name)
+	
+	
+	
+	Invisible Index:
+		* not used in Optimizer
+		* automatically all indexes are Visible
+		* initialization parameter OPTIMIZER_USER_INVISIBLE_INDEXES could be set to TRUE, then it will consider all indexes
+		* is needed for Testing INDEX on a TABLE
+		* even if index in invisible insert, udpate, delete is still will be optimized based on INVISIBLE index
+		
+	CREATE 		  INDEX index_name ON table_name (column_name) INVISIBLE
+	CREATE 		  INDEX index_name ON table_name (column_name)   VISIBLE --default value
+	ALTER         INDEX index_name 							   INVISIBLE
+	ALTER         INDEX index_name 							     VISIBLE
+
+	Multiple INDEXes ona a given Column Set (1 or more columns):
+		* if several indexes exists on same column set then only 1 will be Visible (others invisible)
+		* if you create index on column set which index already exist you will receive error, 
+		 previous ones should be set to INVISIBLE
+		  
+		* Can:
+			- UNIQUE INDEX and NONUNIQUE INDEX on same column set
+			- different type of index: (B-Tree or BITMAP)
+				* previous index were B-tree indexes
+					- good in transaction based
+				* new index BITMAP INDEX (CREATE BITMAP INDEX):
+					- good in heavier use of Select statement
+				* Different Partitioning:
+					- Partitionin type (hash or range)
+					- Local versus global partitioning
+					- Partitioning versus nonpartitioning
+		
+	
+	CREATE BITMAP INDEX index_name ON table_name (column_name);
+
+FLASHBACK OPERATORS:
+	tasks you can accomplish with Flashback:
+		* tables (you droped)
+		* data changes within one or more tables (result of DML statements)
+		* data analysis that's been changed over periods of time
+		* compare data with different points in time
+		* perform queries as of a prior time period
+
+	During FLASHBACK TABLE:
+		* recovers INDEX (except BITMAP JOIN INDEX)
+		* recovers constraints (except FOREIGN KEY constraints)
+		* recovers GRANTED privileges
+		* recovers TRIGGER
+		
+		* if table is droped, and then flashbacked then index will be renamed to system based naming
+		* is a single statement (after flashback table table_name_1, table_name_2 to before drop 
+								 -- if table_name_2 gives error then table_name_1 is not droped)
+	
+	FLASHBACK TABLE table_name TO ...
+	FLASHBACK TABLE table_name_1, table_name_2 TO ...
+	FLASHBACK TABLE table_name TO BEFORE DROP
+	FLASHBACK TABLE table_name TO BEFORE DROP RENAME TO table_name_recovered
+	
+	FLASHBACK TABLE table_name TO SCN scn_expression;
+	FLASHBACK TABLE table_name TO TIMESTAMP timestamp_expression;
+	FLASHBACK TABLE table_name TO RESTORE POINT restore_point_expression;
+	
+	CREATE TABLE table_name (column_name varchar2(80)) 
+				 ENABLE ROW MOVEMENT;
+	ALTER TABLE table_name ENABLE ROW MOVEMENT;
+			
+	Limitations:
+		* if table is altered flashback will not work (droped column or changed format of column) 
+		* FLASHBACK table automatically(implicit) commit;
+	
+RECYCLE BIN:
+	* if droped then created and then again droped, then there will be 2 tables in recyclebin
+
+	
+	SELECT * FROM USER_RECYCLEBIN
+	SELECT * FROM RECYCLEBIN -- same as previous one, RECYCLEBIN is synonym of USER_RECYCLEBIN
+	ALTER SESSION SET recyclebin = ON;
+	ALTER SESSION SET recyclebin = OFF;
+	
+	
+PURGE:
+	* first drop table then purge table
+	PURGE TABLE table_name --removes from recyclebin
+	PURGE USER_RECYCLEBIN
+	PURGE RECYCLEBIN
+	PURGE DBA_RECYCLEBIN
+	
+	
+SCN: SYSTEM CHANGE NUMBER
+	SELECT DBMS_FLASHBACK.GET_SYSTEM_CHANGE_NUMBER from DUAL
+	SELECT CURRENT_SCN from V$DATABASE;
+	SELECT ORA_ROWSCN from TABLE_NAME
+	
+RESTORE POINT:
+	CREATE RESTORE POINT restore_point_name_1; --DDL
+	FLACHBACK TABLE table_name TO RESTORE POINT restore_point_name_1;
+	DROP RESTORE POINT restore_point_name_1;
+	select * from V$RESTORE_POINT;
+	

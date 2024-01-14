@@ -1,24 +1,156 @@
 -----------------------------SQL Chapter 12--------------------------
+-----------------Managing Objects with DATA DICTIONARY / METADATA--------------
+Includes:
+	1. Tables
+	2. Views
+	3. Indexes
+	4. Constraints
+	5. Sequences
+	...
 
---definition of each view
-select * from DICTIONARY;
 
---tables owned by the current user
+
+
+
+
+select * from DICTIONARY; --VIEWS
+
+
 select * from USER_TABLES;
+	* your tables
+	* Includes:
+		- TABLE_NAME
+		- STATUS - valid and available to use (ex. View has been edited and later it will not work then this is invalid)
+		- ROW_MOVEMENT - available or not
+		- AVG_ROW_LEN
+
+
 select * from ALL_TABLES;
+	* All tables your user could see
+	* all columns as in USER_TABLE + OWNER
+
 select * from DBA_TABLES;
+	* All tables DBA could see, literally all
+	* all columns as in USER_TABLE + OWNER
 
---General prefixes
-USER_***;
-ALL_***;
-DBA_***;
 
---*** variations
-***_TABLES;
-***_CONSTRAINTS;
-***_SYNONYMS;
+General prefixes:
+	* USER_table_name_1;
+	* ALL_table_name_1;
+	* DBA_table_name_1;
+	
+	* V_$ - Dynamic performace views (for views)
+	* V$  - Dynamic performace views (for public views)
 
---Dynamic Performance Views
-V_$***; --dynamic performance views
-GV_$***; -- 
-V$***;
+	* GV_$ - Global dynamic performace views (for views)
+	* GV$  - Global dynamic performace views (for public views)
+
+	* TABLE_, COLUMN_, INDEX_, SM$, AUDIT_, CHANGE_, CLIENT_, DICT_, DATABASE_, DBMS_, GLOBAL_, LOGSTDBY_, NLS_, RESOURCE_, ROLE_, SESSION_, CLIENT_RESULT_CASHE_STATS$
+
+
+table_name_1 variations:
+	USER_TABLES;
+	USER_TAB_COLUMNS	
+
+	USER_VIEWS
+	USER_SYNONYMS; -- Public synonims are located in ALL_SYNONYMS, DBA_SYNONYMS even if public synonym was created by you
+
+	USER_INDEXES;
+	USER_CONSTRAINTS;
+	USER_SEQUENCES	
+
+	
+	USER_COL_PRIVS
+	USER_TAB_PRIVS
+
+	USER_CONS_COLUMNS - Constraint Columns
+	USER_IND_COLUMNS
+	USER_CATALOG
+	USER_DEPENDENCIES
+	USER_ERRORS
+	USER_OBJECTS
+
+	
+	
+	
+Dynamic Perforamce Views:
+	* V$DATABASE
+	* V$INSTANCE
+	* V$PARAMETER
+		- NLS_ paramateres
+	* V$SESSION_
+	* V$RESERVED_WORDS
+	* V$OBJECT_USAGE
+	* v%TIMEZONE_NAMES
+
+
+
+Comments:
+	* ALL_TAB_COMMENTS - all object comments
+	* ALL_COL_COMMENTS - all columnt comments
+
+	COMMENT ON object_type object_name IS comment_1;
+	COMMENT ON TABLE table_name_1 IS comment_1;
+	COMMENT ON COLUMN table_name_1.column_name_1 IS comment_1;
+	COMMENT ON COLUMN table_name_1.column_name_1 IS '';
+	
+
+DICTIONARY:
+	Contains:
+		* TABLE_NAME
+		* COMMENTS
+	
+	
+User owned objects:
+	USER_CATALOG (CAT):
+		select * from USER_CATALOG;
+		select * from CAT;
+		
+		
+		Contains:
+			* TABLE_TYPE
+			* TABLE_NAME
+	
+	USER_OBJECTS (OBJ):
+		select * from USER_OBJECTS;
+		select * from OBJ;
+
+		Contains:
+			* STATUS = 'INVALID' -- invalid Views
+			* OBJECT_TYPE
+			* OBJECT_NAME
+			* ...
+
+	USER_TABLES (TABS):
+		select * from USER_TABLES;
+		select * from TABS;
+
+	USER_TAB_COLUMNS (COLS):
+		select * from USER_TAB_COLUMNS;
+		select * from COLS;
+			
+	
+Checking Privileges:
+	* USER_SYS_PRIVS
+	* USER_TAB_PRIVS
+	* USER_ROLE_PRIVS
+	* DBA_SYS_PRIVS
+	* DBA_TAB_PRIVS
+	* DBA_ROLE_PRIVS
+	* ROLE_SYS_PRIVS
+	* ROLE_TAB_PRIVS
+	* SESSION_PRIVS
+
+
+Inspecting Constraints:
+	select * from USER_CONSTRAINTS
+		* CONSTRAINT_TYPE:
+			Contains:
+				P - Primary Key
+				R - Foreign Key (R for Referential Integrity)
+				U - Unique Key
+				C - CHECK or NOT NULL
+		* DELETE_RULE
+			- ON DELETE CASCADE or ON DELETE SET NULL
+		* SEARCH_CONDITION
+			- usefull inspecting CHECK contraints

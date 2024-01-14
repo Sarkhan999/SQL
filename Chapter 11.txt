@@ -1,0 +1,44 @@
+-----------------------------SQL Chapter 11--------------------------
+----------Using Set Operators----------
+
+Include:
+	1. UNION
+	2. UNION ALL
+	3. INTERSECT
+	4. MINUS
+
+	* order by could be used in last SELECT statement
+	* BLOB and CLOB could not be used
+	* data types should match, or at least implicitly converted
+	* number of columns should be same
+	
+Intersect:
+	* removes duplicate values
+	??? check duplicates
+
+MINUS:
+	??? DUplicates?
+
+
+
+Combinations of set operators:
+	* same prioroity, it means it will be executed by order 1,2,3 ...
+	* to prioritize use paranthesis
+	* Order by should be used at the end
+	??? what if order by will be used in the center?
+	
+Order by:
+	* by Position:
+		select CUSTOMER_NO from sc
+		union
+		select CUSTOMER_NO from scp
+		order by 1 desc
+		
+	* by reference:
+		- only use name of the first table
+		select CUSTOMER_NO from sc
+		union
+		select CIF from scp
+		order by CUSTOMER_NO desc
+		
+		

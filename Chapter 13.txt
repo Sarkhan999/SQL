@@ -1,20 +1,48 @@
 -----------------------------SQL Chapter 13--------------------------
+-----------------Multi Table INSERT--------------
 
---Multi Table INSERT
---Unconditional
-INSERT ALL
-	INTO tab1 (col_list) VALUES (col_list1)
-	INTO tab2 (col_list) VALUES (col_list2)
-subquery;
---Conditional
-INSERT ALL -- could be ALL (default could be omitted) or FIRST 
-	WHEN expression THEN
-		INTO tab1 (col_list) VALUES (col_list1)
-	WHEN expression THEN
-		INTO tab2 (col_list) VALUES (col_list2)
-	ELSE --optional
-		INTO tab3 (col_list) VALUES (col_list3)
-subquery;
+INSERT INTO table_name_1 VALUES ('AAA','BBB','CCC');
+INSERT INTO table_name_1 (col1, col3) VALUES ('AAA','CCC');
+
+
+INSERT INTO table_name_1 SELECT * FROM source_table_name_1;
+INSERT INTO table_name_1 (col1, col3) SELECT aaa,bbb FROM source_table_name_1;
+t
+
+Applied to all:
+	1. If at least one INTO clause fails, then whole insert is failed, no changes made in DB
+	2. only for Tables not for Views
+
+	1. Option 1: UnConditional
+		INSERT ALL --must
+			INTO tab1 (col_list) VALUES (col_list1)
+			INTO tab2 (col_list)
+		subquery;
+		
+		* at least 1 into clause should exist
+		* VALUES list is optional, otherwise will be used subquery
+		
+		
+	
+	2. Option 2: Conditional
+		INSERT [ALL|FIRST|] --default ALL
+			WHEN flg = 'Y' THEN
+				INTO tab1 (col_list) VALUES (col_list1)
+				INTO tab2 (col_list) VALUES (col_list2)
+			WHEN flg = 'N' THEN
+				INTO tab3 (col_list) VALUES (col_list3)
+			ELSE
+				INTO tab4 (col_list) VALUES (col_list4)
+	
+	
+???INSERT FIRST INTO ... INTO ... subquery;
+???INSERT FIRST INTO ... VALUES (...) INTO ... VALUES (...) subquery;
+
+
+
+
+
+
 
 -WRONG Queries
 --should be insert all 
@@ -23,14 +51,22 @@ INSERT
 	INTO tab2 (col_list) VALUES (col_list2)
 subquery;
 
+
+
+
 --Merge Function
-MERGE INTO table
-USING table | subquery
-ON condition
-WHEN MATCHED THEN UPDATE SET col = expression | DEFAULT
-where_clause
-DELETE where_clause
-WHEN NOT MATCHED THEN INSERT (col1, col2)
-VALUES (expr1, expr2 | DEFAULT)
-where_clause
-WHERE condition;
+	MERGE INTO target_table
+	USING source_table
+	ON (condition)
+	WHEN MATCHED THEN UPDATE SET col = expression | DEFAULT
+	where_clause
+	DELETE where_clause
+	WHEN NOT MATCHED THEN INSERT (col1, col2)
+	VALUES (expr1, expr2 | DEFAULT)
+	where_clause
+	WHERE condition;
+	
+	Points to consider:
+		1. on Condition should be Unique
+		2. can not update ON columns
+		
